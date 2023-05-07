@@ -9,7 +9,7 @@ import apiErrorHandler from './middlewares/apiErrorHandler'
 import apiContentType from './middlewares/apiContentType'
 import movieRouter from './routers/movie.router'
 
-dotenv.config({ path: '.env' })
+dotenv.config()
 const app = express()
 
 // Express configuration

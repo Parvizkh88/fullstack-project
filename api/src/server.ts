@@ -6,6 +6,8 @@ import { MONGODB_URI } from './util/secrets'
 import logger from './util/logger'
 
 const mongoUrl = MONGODB_URI
+// this added later:
+mongoose.set('strictQuery', true);
 
 mongoose
   .connect(mongoUrl)
