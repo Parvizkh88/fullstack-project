@@ -17,7 +17,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const config_1 = __importDefault(require("./config"));
 const db_1 = __importDefault(require("./config/db"));
 // third party packages here
-// import cors from 'cors';
+// import cors from 'cors'  ;
 // import bodyParser from 'body-parser';
 // import {connectDB} from './config/db';
 const app = (0, express_1.default)();

@@ -5,7 +5,7 @@ import dev from "./config";
 import connectDatabase from "./config/db";
 // third party packages here
 
-// import cors from 'cors';
+// import cors from 'cors'  ;
 
 // import bodyParser from 'body-parser';
 // import {connectDB} from './config/db';
