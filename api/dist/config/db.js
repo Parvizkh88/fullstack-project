@@ -12,21 +12,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.connectDB = void 0;
+exports.connectDatabase = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const _1 = require(".");
-const connectDB = () => __awaiter(void 0, void 0, void 0, function* () {
+const _1 = __importDefault(require("."));
+// import { dbURL } from '.';
+const connectDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield mongoose_1.default.connect(_1.dbURL);
-        console.log('db is connected');
+        yield mongoose_1.default.connect(_1.default.db.url);
+        console.log('database is connected');
     }
     catch (error) {
-        if (typeof error === 'string') {
-            console.log(error);
-        }
-        else if (error instanceof Error) {
-            console.log(error.message);
-        }
+        console.log('database is not connected');
+        console.log(error);
     }
 });
-exports.connectDB = connectDB;
+exports.connectDatabase = connectDatabase;
+exports.default = exports.connectDatabase;
