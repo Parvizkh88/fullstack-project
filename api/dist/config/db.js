@@ -15,14 +15,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.connectDatabase = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const _1 = __importDefault(require("."));
-// import { dbURL } from '.';
 const connectDatabase = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield mongoose_1.default.connect(_1.default.db.url);
-        console.log('database is connected');
+        console.log("database is connected");
     }
     catch (error) {
-        console.log('database is not connected');
+        console.log("database is not connected");
         console.log(error);
     }
 });
