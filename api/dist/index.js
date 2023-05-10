@@ -25,7 +25,7 @@ const app = (0, express_1.default)();
 app.use((0, morgan_1.default)("dev"));
 // app.use(bodyParser.json());
 const PORT = config_1.default.app.serverPort;
-app.get("/", (req, res) => {
+app.get("/test", (req, res) => {
     res.status(200).send("api is running fine");
 });
 // app.use((err:Error, req:Request, res:Response,next:NextFunction)=>{

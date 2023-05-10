@@ -18,7 +18,7 @@ app.use(morgan("dev"));
 
 const PORT = dev.app.serverPort;
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/test", (req: Request, res: Response) => {
   res.status(200).send("api is running fine");
 });
 
