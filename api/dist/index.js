@@ -31,9 +31,9 @@ const PORT = config_1.default.app.serverPort;
 app.get("/", (req, res, next) => {
     res.status(200).send("api is running fine");
 });
-// app.use((err:Error, req:Request, res:Response,next:NextFunction)=>{
-//   res.status(500).json({message:err.message});
-// })
+// app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+//   res.status(500).json({ message: err.message });
+// });
 app.listen(PORT, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(`server is running at http://localhost:${PORT}`);
     yield (0, db_1.default)();

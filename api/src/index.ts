@@ -25,10 +25,9 @@ app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).send("api is running fine");
 });
 
-// app.use((err:Error, req:Request, res:Response,next:NextFunction)=>{
-//   res.status(500).json({message:err.message});
-
-// })
+// app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+//   res.status(500).json({ message: err.message });
+// });
 
 app.listen(PORT, async () => {
   console.log(`server is running at http://localhost:${PORT}`);

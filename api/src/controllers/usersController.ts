@@ -1,11 +1,18 @@
 import { Request, RequestHandler, Response } from "express";
+import User from "../models/userModel";
 
-export const registerUser: RequestHandler = (req: Request, res: Response) => {
+export const registerUser: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    console.log(req.fields);
+    // console.log(req.fields);
     // console.log(req.files);
 
-    // const { name, email, password, phone }: UserType = req.body;
+    const { name, email, password, phone }: UserType = req.fields;
+    // const { image }: UserType = req.files;
+    const newUser = new User({ name, email, password, phone });
+    await newUser.save();
     res.status(201).json({
       message: "user is created",
     });
