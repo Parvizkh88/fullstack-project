@@ -1,5 +1,6 @@
 import { Request, RequestHandler, Response } from "express";
 import User from "../models/userModel";
+import { UserType } from "../@types/users";
 
 export const registerUser: RequestHandler = async (
   req: Request,
@@ -8,7 +9,10 @@ export const registerUser: RequestHandler = async (
   try {
     // console.log(req.fields);
     // console.log(req.files);
-
+    if (!req.fields) {
+      res.status(400).json({ message: "Missing request fields" });
+      return;
+    }
     const { name, email, password, phone }: UserType = req.fields;
     // const { image }: UserType = req.files;
     const newUser = new User({ name, email, password, phone });
