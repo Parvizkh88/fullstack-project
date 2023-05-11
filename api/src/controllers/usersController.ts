@@ -3,7 +3,7 @@ import { Request, RequestHandler, Response } from "express";
 export const registerUser: RequestHandler = (req: Request, res: Response) => {
   try {
     console.log(req.fields);
-    console.log(req.files);
+    // console.log(req.files);
 
     // const { name, email, password, phone }: UserType = req.body;
     res.status(201).json({

@@ -27,10 +27,10 @@ const userSchema = new mongoose_1.Schema({
         required: [true, "user password is required"],
         min: 6,
     },
-    image: {
-        type: String,
-        default: "../../public/images/users/Jordan.jpg",
-    },
+    // image: {
+    //   type: String,
+    //   default: "../../public/images/users/Jordan.jpg",
+    // },
     phone: {
         type: String,
         required: [true, "user phone is required"],
