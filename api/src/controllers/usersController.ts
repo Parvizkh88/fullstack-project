@@ -13,7 +13,14 @@ export const registerUser: RequestHandler = async (
       res.status(400).json({ message: "Missing request fields" });
       return;
     }
-    const { name, email, password, phone }: UserType = req.fields;
+
+    const { name, email, password, phone } = req.fields;
+
+    // Check that required properties exist
+    if (!name || !email || !password || !phone) {
+      res.status(400).json({ message: "Missing required user fields" });
+      return;
+    }
     // const { image }: UserType = req.files;
     const newUser = new User({ name, email, password, phone });
     await newUser.save();
