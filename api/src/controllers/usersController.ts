@@ -1,6 +1,9 @@
 import { Request, RequestHandler, Response } from "express";
 import User from "../models/userModel";
 import { UserType } from "../@types/users";
+import { securePassword } from "../helpers/bcryptPassword";
+import dev from "../config";
+const jwt = require("jsonwebtoken");
 
 export const registerUser: RequestHandler = async (
   req: Request,
@@ -18,14 +21,40 @@ export const registerUser: RequestHandler = async (
 
     // Check that required properties exist
     if (!name || !email || !password || !phone) {
-      res.status(400).json({ message: "Missing required user fields" });
+      res
+        .status(404)
+        .json({ message: "name, email, phone or password is missing " });
       return;
     }
+
+    if (password.length < 6) {
+      return res.status(404).json({
+        message: "minimum length for password is 6",
+      });
+    }
+
+    const isExist = await User.findOne({ email: email });
+    if (isExist) {
+      return res.status(400).json({
+        message: "user with this email already exists",
+      });
+    }
+
+    const hashedPassword = await securePassword(password);
+
+    // store the data
+    const token = jwt.sign(
+      { name, email, phone, hashedPassword },
+      dev.app.jwtSecretKey,
+      { expiresIn: "20m" }
+    );
+
     // const { image }: UserType = req.files;
     const newUser = new User({ name, email, password, phone });
     await newUser.save();
     res.status(201).json({
-      message: "user is created",
+      // message: "user is created",
+      token: token,
     });
     //In your code, you're trying to access the message property
     // of error which is of type unknown. TypeScript is complaining
