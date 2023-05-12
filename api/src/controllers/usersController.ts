@@ -42,6 +42,17 @@ export const registerUser: RequestHandler = async (
       });
     }
 
+    //  req.fields object is allowing its values to be either string
+    // or string[] (an array of strings). so, I want to make sure
+    // that name, email, password, and phone are indeed strings when
+    // I destructure them from req.fields. You can do this by checking
+    // their types before calling securePassword and sendEmailWithNodeMailer.
+    if (typeof password !== "string" || typeof email !== "string") {
+      return res.status(400).json({
+        message: "Invalid email or password format",
+      });
+    }
+
     const hashedPassword = await securePassword(password);
 
     // store the data

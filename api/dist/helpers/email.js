@@ -14,7 +14,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const config_1 = __importDefault(require("../config"));
-sendEmailWithNodeMailer = (emailData) => __awaiter(void 0, void 0, void 0, function* () {
+//sendEmailWithNodeMailer is a constant that holds a function
+// which takes an object with properties email, subject, and
+// html (all strings), and returns a promise that resolves to void
+const sendEmailWithNodeMailer = (emailData) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transporter = nodemailer_1.default.createTransport({
             host: "smtp.gmail.com",

@@ -1,7 +1,14 @@
 import nodemailer from "nodemailer";
 import dev from "../config";
 
-sendEmailWithNodeMailer = async (emailData) => {
+//sendEmailWithNodeMailer is a constant that holds a function
+// which takes an object with properties email, subject, and
+// html (all strings), and returns a promise that resolves to void
+const sendEmailWithNodeMailer: (emailData: {
+  email: string;
+  subject: string;
+  html: string;
+}) => Promise<void> = async (emailData) => {
   try {
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
