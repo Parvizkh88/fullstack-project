@@ -1,9 +1,11 @@
 import { Request, RequestHandler, Response } from "express";
+const jwt = require("jsonwebtoken");
+
 import User from "../models/userModel";
 import { UserType } from "../@types/users";
 import { securePassword } from "../helpers/bcryptPassword";
 import dev from "../config";
-const jwt = require("jsonwebtoken");
+import sendEmailWithNodeMailer from "../helpers/email";
 
 export const registerUser: RequestHandler = async (
   req: Request,
@@ -49,11 +51,21 @@ export const registerUser: RequestHandler = async (
       { expiresIn: "20m" }
     );
 
+    // prepare an email
+    const emailData = {
+      email,
+      subject: "Account Activation Email",
+      html: `
+            <h2>Hello ${name}! </h2>
+            <p>Please click here to <a href="${dev.app.clientUrl}/api/users/activate?token=${token}" target="_blank">activate your account</a> </p>
+            `,
+    };
+    sendEmailWithNodeMailer(emailData);
     // const { image }: UserType = req.files;
-    const newUser = new User({ name, email, password, phone });
-    await newUser.save();
-    res.status(201).json({
-      // message: "user is created",
+    // const newUser = new User({ name, email, password, phone });
+    // await newUser.save();
+    res.status(200).json({
+      message: "verification link has been sent to your email.",
       token: token,
     });
     //In your code, you're trying to access the message property
