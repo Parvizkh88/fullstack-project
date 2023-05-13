@@ -8,4 +8,5 @@ const express_1 = require("express");
 const usersController_1 = require("../controllers/usersController");
 const router = (0, express_1.Router)();
 router.post("/register", (0, express_formidable_1.default)(), usersController_1.registerUser);
+router.post("/verify-email", usersController_1.verifyEmail);
 exports.default = router;

@@ -2,15 +2,12 @@ import { Request, RequestHandler, Response } from "express";
 const jwt = require("jsonwebtoken");
 
 import User from "../models/userModel";
-import { UserType } from "../@types/users";
+import { UserType, DecodedToken } from "../@types/users";
 import { securePassword } from "../helpers/bcryptPassword";
 import dev from "../config";
 import sendEmailWithNodeMailer from "../helpers/email";
 
-export const registerUser: RequestHandler = async (
-  req: Request,
-  res: Response
-) => {
+const registerUser: RequestHandler = async (req: Request, res: Response) => {
   try {
     // console.log(req.fields);
     // console.log(req.files);
@@ -95,3 +92,68 @@ export const registerUser: RequestHandler = async (
     }
   }
 };
+const verifyEmail = (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+    console.log(token);
+
+    if (!token) {
+      return res.status(404).json({
+        message: "token is missing",
+      });
+    }
+
+    jwt.verify(
+      token,
+      dev.app.jwtSecretKey,
+      async function (err: Error | null, decoded: DecodedToken | undefined) {
+        if (err) {
+          return res.status(401).json({
+            message: "token is expired",
+          });
+        }
+        // decoded the data - bring the data if token is not expired
+        if (decoded) {
+          const { name, email, hashedPassword, phone } = decoded;
+          console.log(decoded);
+          const isExist = await User.findOne({ email: email });
+          if (isExist) {
+            return res.status(400).json({
+              message: "user with this email already exists",
+            });
+          }
+          // create the user without image
+          const newUser = new User({
+            name: name,
+            email: email,
+            password: hashedPassword,
+            phone: phone,
+            is_verified: 1,
+          });
+          // create the user with image (needed to be done)
+          // save the user
+          const user = await newUser.save();
+          if (!user) {
+            res.status(400).json({
+              message: "user was not created.",
+            });
+          }
+          res.status(201).json({
+            message: "user was created. ready to login",
+          });
+        }
+      }
+    );
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "An unexpected error occurred.",
+      });
+    }
+  }
+};
+export { registerUser, verifyEmail };

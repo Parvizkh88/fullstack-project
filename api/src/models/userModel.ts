@@ -10,6 +10,7 @@ interface IUser extends Document {
   image: string;
   phone: string;
   is_admin: number;
+  is_verified: number;
   createdAt: Date;
   isBanned: number;
 }
@@ -49,6 +50,10 @@ const userSchema = new Schema<IUser>({
     required: [true, "user phone is required"],
   },
   is_admin: {
+    type: Number,
+    default: 0,
+  },
+  is_verified: {
     type: Number,
     default: 0,
   },

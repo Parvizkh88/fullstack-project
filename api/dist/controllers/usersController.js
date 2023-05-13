@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.registerUser = void 0;
+exports.verifyEmail = exports.registerUser = void 0;
 const jwt = require("jsonwebtoken");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const bcryptPassword_1 = require("../helpers/bcryptPassword");
@@ -94,3 +94,66 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.registerUser = registerUser;
+const verifyEmail = (req, res) => {
+    try {
+        const { token } = req.body;
+        console.log(token);
+        if (!token) {
+            return res.status(404).json({
+                message: "token is missing",
+            });
+        }
+        jwt.verify(token, config_1.default.app.jwtSecretKey, function (err, decoded) {
+            return __awaiter(this, void 0, void 0, function* () {
+                if (err) {
+                    return res.status(401).json({
+                        message: "token is expired",
+                    });
+                }
+                // decoded the data - bring the data if token is not expired
+                if (decoded) {
+                    const { name, email, hashedPassword, phone } = decoded;
+                    console.log(decoded);
+                    const isExist = yield userModel_1.default.findOne({ email: email });
+                    if (isExist) {
+                        return res.status(400).json({
+                            message: "user with this email already exists",
+                        });
+                    }
+                    // create the user without image
+                    const newUser = new userModel_1.default({
+                        name: name,
+                        email: email,
+                        password: hashedPassword,
+                        phone: phone,
+                        is_verified: 1,
+                    });
+                    // create the user with image (needed to be done)
+                    // save the user
+                    const user = yield newUser.save();
+                    if (!user) {
+                        res.status(400).json({
+                            message: "user was not created.",
+                        });
+                    }
+                    res.status(201).json({
+                        message: "user was created. ready to login",
+                    });
+                }
+            });
+        });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({
+                message: error.message,
+            });
+        }
+        else {
+            res.status(500).json({
+                message: "An unexpected error occurred.",
+            });
+        }
+    }
+};
+exports.verifyEmail = verifyEmail;
