@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyEmail = exports.registerUser = void 0;
+exports.logoutUser = exports.loginUser = exports.verifyEmail = exports.registerUser = void 0;
 const jwt = require("jsonwebtoken");
 const userModel_1 = __importDefault(require("../models/userModel"));
 const bcryptPassword_1 = require("../helpers/bcryptPassword");
@@ -157,3 +157,74 @@ const verifyEmail = (req, res) => {
     }
 };
 exports.verifyEmail = verifyEmail;
+const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(404).json({
+                message: "email or password is missing ",
+            });
+        }
+        if (password.length < 6) {
+            return res.status(404).json({
+                message: "minimum length for password is 6",
+            });
+        }
+        const user = yield userModel_1.default.findOne({ email: email });
+        if (!user) {
+            return res.status(400).json({
+                message: "user with this email does not exist. Please register first",
+            });
+        }
+        const isPasswordMatched = yield (0, bcryptPassword_1.comparePassword)(password, user.password);
+        // console.log(user.password);
+        // console.log(password);
+        if (!isPasswordMatched) {
+            return res.status(400).json({
+                message: "email/password mismatched",
+            });
+        }
+        res.status(200).json({
+            user: {
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                image: user.image,
+            },
+            message: "login successful",
+        });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({
+                message: error.message,
+            });
+        }
+        else {
+            res.status(500).json({
+                message: "An unexpected error occurred.",
+            });
+        }
+    }
+});
+exports.loginUser = loginUser;
+const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        res.status(200).json({
+            message: "logout successful ",
+        });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({
+                message: error.message,
+            });
+        }
+        else {
+            res.status(500).json({
+                message: "An unexpected error occurred.",
+            });
+        }
+    }
+});
+exports.logoutUser = logoutUser;

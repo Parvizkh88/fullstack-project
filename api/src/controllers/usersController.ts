@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 import User from "../models/userModel";
 import { UserType, DecodedToken } from "../@types/users";
-import { securePassword } from "../helpers/bcryptPassword";
+import { securePassword, comparePassword } from "../helpers/bcryptPassword";
 import dev from "../config";
 import sendEmailWithNodeMailer from "../helpers/email";
 
@@ -156,4 +156,71 @@ const verifyEmail = (req: Request, res: Response) => {
     }
   }
 };
-export { registerUser, verifyEmail };
+const loginUser = async (req: Request, res: Response) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(404).json({
+        message: "email or password is missing ",
+      });
+    }
+    if (password.length < 6) {
+      return res.status(404).json({
+        message: "minimum length for password is 6",
+      });
+    }
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({
+        message: "user with this email does not exist. Please register first",
+      });
+    }
+    const isPasswordMatched = await comparePassword(password, user.password);
+    // console.log(user.password);
+    // console.log(password);
+
+    if (!isPasswordMatched) {
+      return res.status(400).json({
+        message: "email/password mismatched",
+      });
+    }
+    res.status(200).json({
+      user: {
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        image: user.image,
+      },
+      message: "login successful",
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "An unexpected error occurred.",
+      });
+    }
+  }
+};
+const logoutUser = async (req: Request, res: Response) => {
+  try {
+    res.status(200).json({
+      message: "logout successful ",
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "An unexpected error occurred.",
+      });
+    }
+  }
+};
+
+export { registerUser, verifyEmail, loginUser, logoutUser };
