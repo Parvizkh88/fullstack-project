@@ -1,5 +1,5 @@
 import { Request, RequestHandler, Response } from "express";
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 import User from "../models/userModel";
 import { UserType, DecodedToken } from "../@types/users";
@@ -92,10 +92,9 @@ const registerUser: RequestHandler = async (req: Request, res: Response) => {
     }
   }
 };
-const verifyEmail = (req: Request, res: Response) => {
+const verifyEmail = async (req: Request, res: Response) => {
   try {
     const { token } = req.body;
-    console.log(token);
 
     if (!token) {
       return res.status(404).json({
@@ -103,47 +102,39 @@ const verifyEmail = (req: Request, res: Response) => {
       });
     }
 
-    jwt.verify(
-      token,
-      dev.app.jwtSecretKey,
-      async function (err: Error | null, decoded: DecodedToken | undefined) {
-        if (err) {
-          return res.status(401).json({
-            message: "token is expired",
-          });
-        }
-        // decoded the data - bring the data if token is not expired
-        if (decoded) {
-          const { name, email, hashedPassword, phone } = decoded;
-          console.log(decoded);
-          const isExist = await User.findOne({ email: email });
-          if (isExist) {
-            return res.status(400).json({
-              message: "user with this email already exists",
-            });
-          }
-          // create the user without image
-          const newUser = new User({
-            name: name,
-            email: email,
-            password: hashedPassword,
-            phone: phone,
-            is_verified: 1,
-          });
-          // create the user with image (needed to be done)
-          // save the user
-          const user = await newUser.save();
-          if (!user) {
-            res.status(400).json({
-              message: "user was not created.",
-            });
-          }
-          res.status(201).json({
-            message: "user was created. ready to login",
-          });
-        }
+    try {
+      const decoded = jwt.verify(token, dev.app.jwtSecretKey) as DecodedToken;
+
+      const { name, email, hashedPassword, phone } = decoded;
+      const isExist = await User.findOne({ email: email });
+      if (isExist) {
+        return res.status(400).json({
+          message: "user with this email already exists",
+        });
       }
-    );
+      // create the user without image
+      const newUser = new User({
+        name: name,
+        email: email,
+        password: hashedPassword,
+        phone: phone,
+        is_verified: 1,
+      });
+      // save the user
+      const user = await newUser.save();
+      if (!user) {
+        res.status(400).json({
+          message: "user was not created.",
+        });
+      }
+      res.status(201).json({
+        message: "user was created. ready to login",
+      });
+    } catch (err) {
+      return res.status(401).json({
+        message: "token is expired",
+      });
+    }
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({
@@ -156,6 +147,7 @@ const verifyEmail = (req: Request, res: Response) => {
     }
   }
 };
+
 const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
@@ -184,6 +176,32 @@ const loginUser = async (req: Request, res: Response) => {
         message: "email/password mismatched",
       });
     }
+    // -----------------------------------------
+    // token base authentication
+    // generate JWT access token
+    // we store the id in the token: {id:user._id}
+    const token = jwt.sign({ id: user._id }, String(dev.app.jwtSecretKey), {
+      expiresIn: "10m",
+    });
+    // console.log(token);
+
+    // reset the cookie if there is a cookie with the same id
+    if (req.cookies[`${user._id}`]) {
+      req.cookies[`${user._id}`] = "";
+    }
+
+    // send the token in a response
+    // name of the cookie: String(user._id)
+    // token is the thing you want to store in the cookie:token
+    // path name I want to use when I am creating the cookie
+    res.cookie(String(user._id), token, {
+      path: "/",
+      expires: new Date(Date.now() + 1000 * 9 * 60),
+      httpOnly: true, // send the jwt token inside http only cookie
+      secure: false,
+      sameSite: "none",
+    });
+    // -----------------------------------------
     res.status(200).json({
       user: {
         name: user.name,
@@ -222,5 +240,22 @@ const logoutUser = async (req: Request, res: Response) => {
     }
   }
 };
+const userProfile = async (req: Request, res: Response) => {
+  try {
+    res.status(200).json({
+      message: "profile is returned ",
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "An unexpected error occurred.",
+      });
+    }
+  }
+};
 
-export { registerUser, verifyEmail, loginUser, logoutUser };
+export { registerUser, verifyEmail, loginUser, logoutUser, userProfile };

@@ -12,8 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.logoutUser = exports.loginUser = exports.verifyEmail = exports.registerUser = void 0;
-const jwt = require("jsonwebtoken");
+exports.userProfile = exports.logoutUser = exports.loginUser = exports.verifyEmail = exports.registerUser = void 0;
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const userModel_1 = __importDefault(require("../models/userModel"));
 const bcryptPassword_1 = require("../helpers/bcryptPassword");
 const config_1 = __importDefault(require("../config"));
@@ -57,7 +57,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
         const hashedPassword = yield (0, bcryptPassword_1.securePassword)(password);
         // store the data
-        const token = jwt.sign({ name, email, phone, hashedPassword }, config_1.default.app.jwtSecretKey, { expiresIn: "20m" });
+        const token = jsonwebtoken_1.default.sign({ name, email, phone, hashedPassword }, config_1.default.app.jwtSecretKey, { expiresIn: "20m" });
         // prepare an email
         const emailData = {
             email,
@@ -94,54 +94,47 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.registerUser = registerUser;
-const verifyEmail = (req, res) => {
+const verifyEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { token } = req.body;
-        console.log(token);
         if (!token) {
             return res.status(404).json({
                 message: "token is missing",
             });
         }
-        jwt.verify(token, config_1.default.app.jwtSecretKey, function (err, decoded) {
-            return __awaiter(this, void 0, void 0, function* () {
-                if (err) {
-                    return res.status(401).json({
-                        message: "token is expired",
-                    });
-                }
-                // decoded the data - bring the data if token is not expired
-                if (decoded) {
-                    const { name, email, hashedPassword, phone } = decoded;
-                    console.log(decoded);
-                    const isExist = yield userModel_1.default.findOne({ email: email });
-                    if (isExist) {
-                        return res.status(400).json({
-                            message: "user with this email already exists",
-                        });
-                    }
-                    // create the user without image
-                    const newUser = new userModel_1.default({
-                        name: name,
-                        email: email,
-                        password: hashedPassword,
-                        phone: phone,
-                        is_verified: 1,
-                    });
-                    // create the user with image (needed to be done)
-                    // save the user
-                    const user = yield newUser.save();
-                    if (!user) {
-                        res.status(400).json({
-                            message: "user was not created.",
-                        });
-                    }
-                    res.status(201).json({
-                        message: "user was created. ready to login",
-                    });
-                }
+        try {
+            const decoded = jsonwebtoken_1.default.verify(token, config_1.default.app.jwtSecretKey);
+            const { name, email, hashedPassword, phone } = decoded;
+            const isExist = yield userModel_1.default.findOne({ email: email });
+            if (isExist) {
+                return res.status(400).json({
+                    message: "user with this email already exists",
+                });
+            }
+            // create the user without image
+            const newUser = new userModel_1.default({
+                name: name,
+                email: email,
+                password: hashedPassword,
+                phone: phone,
+                is_verified: 1,
             });
-        });
+            // save the user
+            const user = yield newUser.save();
+            if (!user) {
+                res.status(400).json({
+                    message: "user was not created.",
+                });
+            }
+            res.status(201).json({
+                message: "user was created. ready to login",
+            });
+        }
+        catch (err) {
+            return res.status(401).json({
+                message: "token is expired",
+            });
+        }
     }
     catch (error) {
         if (error instanceof Error) {
@@ -155,7 +148,7 @@ const verifyEmail = (req, res) => {
             });
         }
     }
-};
+});
 exports.verifyEmail = verifyEmail;
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -184,6 +177,30 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 message: "email/password mismatched",
             });
         }
+        // -----------------------------------------
+        // token base authentication
+        // generate JWT access token
+        // we store the id in the token: {id:user._id}
+        const token = jsonwebtoken_1.default.sign({ id: user._id }, String(config_1.default.app.jwtSecretKey), {
+            expiresIn: "10m",
+        });
+        // console.log(token);
+        // reset the cookie if there is a cookie with the same id
+        if (req.cookies[`${user._id}`]) {
+            req.cookies[`${user._id}`] = "";
+        }
+        // send the token in a response
+        // name of the cookie: String(user._id)
+        // token is the thing you want to store in the cookie:token
+        // path name I want to use when I am creating the cookie
+        res.cookie(String(user._id), token, {
+            path: "/",
+            expires: new Date(Date.now() + 1000 * 9 * 60),
+            httpOnly: true,
+            secure: false,
+            sameSite: "none",
+        });
+        // -----------------------------------------
         res.status(200).json({
             user: {
                 name: user.name,
@@ -228,3 +245,23 @@ const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.logoutUser = logoutUser;
+const userProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        res.status(200).json({
+            message: "profile is returned ",
+        });
+    }
+    catch (error) {
+        if (error instanceof Error) {
+            res.status(500).json({
+                message: error.message,
+            });
+        }
+        else {
+            res.status(500).json({
+                message: "An unexpected error occurred.",
+            });
+        }
+    }
+});
+exports.userProfile = userProfile;
