@@ -1,6 +1,7 @@
 import express, { Application, NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 
 import dev from "./config";
 import connectDatabase from "./config/db";
@@ -15,6 +16,7 @@ const app: Application = express();
 
 // app.use(cors());
 app.use(morgan("dev"));
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/users", userRouter);
