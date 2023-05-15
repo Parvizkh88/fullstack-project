@@ -226,11 +226,13 @@ const loginUser = async (req: Request, res: Response) => {
 const logoutUser = async (req: Request, res: Response) => {
   try {
     res.status(200).json({
+      ok: true,
       message: "logout successful ",
     });
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({
+        ok: false,
         message: error.message,
       });
     } else {
@@ -242,8 +244,16 @@ const logoutUser = async (req: Request, res: Response) => {
 };
 const userProfile = async (req: Request, res: Response) => {
   try {
+    // console.log(req.headers.cookie);
+    //fetch the id:
+    console.log(req.headers.cookie?.split("=")[0]);
+    const userData = await User.findById(req.headers.cookie?.split("=")[0], {
+      password: 0,
+    });
     res.status(200).json({
+      ok: true,
       message: "profile is returned ",
+      user: userData,
     });
   } catch (error: unknown) {
     if (error instanceof Error) {

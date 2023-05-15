@@ -10,7 +10,7 @@ import {
   verifyEmail,
 } from "../controllers/usersController";
 import dev from "../config";
-import { isLoggedIn } from "../middlewares/auth";
+import { isLoggedIn, isLoggedOut } from "../middlewares/auth";
 const userRouter = Router();
 
 // userRouter.use(

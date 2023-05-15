@@ -228,12 +228,14 @@ exports.loginUser = loginUser;
 const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         res.status(200).json({
+            ok: true,
             message: "logout successful ",
         });
     }
     catch (error) {
         if (error instanceof Error) {
             res.status(500).json({
+                ok: false,
                 message: error.message,
             });
         }
@@ -246,9 +248,18 @@ const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 });
 exports.logoutUser = logoutUser;
 const userProfile = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
+        // console.log(req.headers.cookie);
+        //fetch the id:
+        console.log((_a = req.headers.cookie) === null || _a === void 0 ? void 0 : _a.split("=")[0]);
+        const userData = yield userModel_1.default.findById((_b = req.headers.cookie) === null || _b === void 0 ? void 0 : _b.split("=")[0], {
+            password: 0,
+        });
         res.status(200).json({
+            ok: true,
             message: "profile is returned ",
+            user: userData,
         });
     }
     catch (error) {
