@@ -3,9 +3,11 @@ import session from "express-session";
 import { Router } from "express";
 
 import {
+  forgetPassword,
   loginUser,
   logoutUser,
   registerUser,
+  resetPassword,
   userProfile,
   verifyEmail,
 } from "../controllers/usersController";
@@ -28,5 +30,7 @@ userRouter.post("/verify-email", verifyEmail);
 userRouter.post("/login", loginUser);
 userRouter.get("/logout", logoutUser);
 userRouter.get("/", isLoggedIn, userProfile);
+userRouter.post("/forget-password", forgetPassword);
+userRouter.post("/reset-password", resetPassword);
 
 export default userRouter;

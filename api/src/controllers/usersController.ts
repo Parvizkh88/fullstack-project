@@ -267,5 +267,123 @@ const userProfile = async (req: Request, res: Response) => {
     }
   }
 };
+const forgetPassword = async (req: Request, res: Response) => {
+  try {
+    // getting email and password from req.body
+    const { email, password } = req.body;
 
-export { registerUser, verifyEmail, loginUser, logoutUser, userProfile };
+    if (!email || !password) {
+      return res.status(404).json({
+        message: "email or password is missing ",
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(404).json({
+        message: "minimum length for password is 6",
+      });
+    }
+    const user = await User.findOne({ email: email });
+    if (!user)
+      return res.status(400).json({
+        message: "user was not found with this email address",
+      });
+    const hashedPassword = await securePassword(password);
+
+    // store the data
+    const token = jwt.sign({ email, hashedPassword }, dev.app.jwtSecretKey, {
+      expiresIn: "20m",
+    });
+    // prepare an email
+    const emailData = {
+      email,
+      subject: "Account Activation Email",
+      html: `
+            <h2>Hello ${user.name}! </h2>
+            <p>Please click here to <a href="${dev.app.clientUrl}
+            /api/users/reset-password?token=${token}
+            " target="_blank">reset your password</a> </p>
+            `,
+    };
+
+    sendEmailWithNodeMailer(emailData);
+
+    res.status(200).json({
+      ok: true,
+      message: "An email has beens sent to reset password",
+      token,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "An unexpected error occurred.",
+      });
+    }
+  }
+};
+const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(404).json({
+        message: "token is missing",
+      });
+    }
+    try {
+      const decoded = jwt.verify(token, dev.app.jwtSecretKey) as DecodedToken;
+      // decoded the data
+      const { email, hashedPassword } = decoded;
+      const foundUser = await User.findOne({ email: email });
+      if (!foundUser) {
+        return res.status(400).json({
+          message: "user with this email does not exist",
+        });
+      }
+      // update the user
+      const updateData = await User.updateOne(
+        { email: email },
+        {
+          $set: {
+            password: hashedPassword,
+          },
+        }
+      );
+      if (!updateData) {
+        res.status(400).json({
+          message: "reset password was not successful",
+        });
+      }
+      res.status(200).json({
+        message: "reset password successfully",
+      });
+    } catch (err) {
+      return res.status(401).json({
+        message: "token is expired or invalid",
+      });
+    }
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "An unexpected error occurred.",
+      });
+    }
+  }
+};
+
+export {
+  registerUser,
+  verifyEmail,
+  loginUser,
+  logoutUser,
+  userProfile,
+  forgetPassword,
+  resetPassword,
+};

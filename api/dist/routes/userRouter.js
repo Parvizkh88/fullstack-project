@@ -22,4 +22,6 @@ userRouter.post("/verify-email", usersController_1.verifyEmail);
 userRouter.post("/login", usersController_1.loginUser);
 userRouter.get("/logout", usersController_1.logoutUser);
 userRouter.get("/", auth_1.isLoggedIn, usersController_1.userProfile);
+userRouter.post("/forget-password", usersController_1.forgetPassword);
+userRouter.post("/reset-password", usersController_1.resetPassword);
 exports.default = userRouter;
