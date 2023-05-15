@@ -10,6 +10,7 @@ import {
   verifyEmail,
 } from "../controllers/usersController";
 import dev from "../config";
+import { isLoggedIn } from "../middlewares/auth";
 const userRouter = Router();
 
 // userRouter.use(
@@ -26,6 +27,6 @@ userRouter.post("/register", formidable(), registerUser);
 userRouter.post("/verify-email", verifyEmail);
 userRouter.post("/login", loginUser);
 userRouter.get("/logout", logoutUser);
-userRouter.get("/profile", userProfile);
+userRouter.get("/", isLoggedIn, userProfile);
 
 export default userRouter;
