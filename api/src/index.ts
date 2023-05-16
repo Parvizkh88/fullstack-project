@@ -6,6 +6,8 @@ import cookieParser from "cookie-parser";
 import dev from "./config";
 import connectDatabase from "./config/db";
 import userRouter from "./routes/userRouter";
+import adminRouter from "./routes/adminRouter";
+
 // third party packages here
 
 // import cors from 'cors'  ;
@@ -20,6 +22,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/users", userRouter);
+app.use("/api/admin", adminRouter);
 
 const PORT = dev.app.serverPort;
 

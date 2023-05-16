@@ -19,6 +19,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const config_1 = __importDefault(require("./config"));
 const db_1 = __importDefault(require("./config/db"));
 const userRouter_1 = __importDefault(require("./routes/userRouter"));
+const adminRouter_1 = __importDefault(require("./routes/adminRouter"));
 // third party packages here
 // import cors from 'cors'  ;
 // import {connectDB} from './config/db';
@@ -29,6 +30,7 @@ app.use((0, cookie_parser_1.default)());
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use("/api/users", userRouter_1.default);
+app.use("/api/admin", adminRouter_1.default);
 const PORT = config_1.default.app.serverPort;
 app.get("/", (req, res, next) => {
     res.status(200).send("api is running fine");
