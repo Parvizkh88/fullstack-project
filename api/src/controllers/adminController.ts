@@ -114,5 +114,26 @@ const logoutAdmin = async (req: Request, res: Response) => {
     }
   }
 };
+const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await User.find({ is_admin: 0 });
+    res.status(200).json({
+      ok: true,
+      message: "returned all users",
+      users: users,
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        ok: false,
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "An unexpected error occurred.",
+      });
+    }
+  }
+};
 
-export { loginAdmin, logoutAdmin };
+export { loginAdmin, logoutAdmin, getAllUsers };

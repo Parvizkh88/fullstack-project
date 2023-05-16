@@ -1,6 +1,10 @@
 import { Router } from "express";
 import dev from "../config";
-import { loginAdmin, logoutAdmin } from "../controllers/adminController";
+import {
+  getAllUsers,
+  loginAdmin,
+  logoutAdmin,
+} from "../controllers/adminController";
 import { isLoggedIn, isLoggedOut } from "../middlewares/auth";
 const adminRouter = Router();
 
@@ -17,5 +21,9 @@ const adminRouter = Router();
 
 adminRouter.post("/login", loginAdmin);
 adminRouter.get("/logout", logoutAdmin);
+adminRouter.get("/dashboard", getAllUsers);
+// adminRouter.post("/dashboard", createUser);
+// adminRouter.put("/dashboard", updateUser);
+// adminRouter.delete("/dashboard", deleteUser);
 
 export default adminRouter;
