@@ -6,19 +6,16 @@ import { UserType, DecodedToken } from "../@types/users";
 import { securePassword, comparePassword } from "../helpers/bcryptPassword";
 import dev from "../config";
 import sendEmailWithNodeMailer from "../helpers/email";
+import { errorResponse } from "../helpers/responseHandler";
 
 const loginAdmin = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.status(404).json({
-        message: "email or password is missing ",
-      });
+      errorResponse(res, 400, "email or password not found");
     }
     if (password.length < 6) {
-      return res.status(404).json({
-        message: "minimum length for password is 6",
-      });
+      errorResponse(res, 400, "minimum length for password is 6");
     }
     const foundUser = await User.findOne({ email: email });
     if (!foundUser) {

@@ -18,4 +18,5 @@ export type DecodedToken = {
   is_verified: number;
   createdAt: Date;
   isBanned: number;
+  // image?: string;
 };
