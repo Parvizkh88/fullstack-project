@@ -20,7 +20,7 @@ const config_1 = __importDefault(require("../config"));
 const email_1 = __importDefault(require("../helpers/email"));
 const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // console.log(req.fields);
+        console.log(req.fields);
         // console.log(req.files);
         if (!req.fields) {
             res.status(400).json({ message: "Missing request fields" });
@@ -119,6 +119,11 @@ const verifyEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
                 phone: phone,
                 is_verified: 1,
             });
+            // create the user with image
+            // if (image) {
+            //   newUser.image.data = fs.readFileSync(image.path);
+            //   newUser.image.contentType = image.type;
+            // }
             // save the user
             const user = yield newUser.save();
             if (!user) {

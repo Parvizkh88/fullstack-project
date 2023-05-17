@@ -7,6 +7,7 @@ const express_formidable_1 = __importDefault(require("express-formidable"));
 const express_1 = require("express");
 const usersController_1 = require("../controllers/usersController");
 const auth_1 = require("../middlewares/auth");
+// import upload from "../middlewares/fileUpload";
 const userRouter = (0, express_1.Router)();
 // userRouter.use(
 //   session({
@@ -17,6 +18,8 @@ const userRouter = (0, express_1.Router)();
 //     cookie: { secure: false, maxAge: 10 * 6000 },
 //   })
 // );
+// I would like to use multer instead of formidable to upload images:
+// userRouter.post("/register", upload.single("image"), registerUser);
 userRouter.post("/register", (0, express_formidable_1.default)(), usersController_1.registerUser);
 userRouter.post("/verify-email", usersController_1.verifyEmail);
 userRouter.post("/login", usersController_1.loginUser);

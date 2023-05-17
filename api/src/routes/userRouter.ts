@@ -13,6 +13,7 @@ import {
 } from "../controllers/usersController";
 import dev from "../config";
 import { isLoggedIn, isLoggedOut } from "../middlewares/auth";
+// import upload from "../middlewares/fileUpload";
 const userRouter = Router();
 
 // userRouter.use(
@@ -24,7 +25,8 @@ const userRouter = Router();
 //     cookie: { secure: false, maxAge: 10 * 6000 },
 //   })
 // );
-
+// I would like to use multer instead of formidable to upload images:
+// userRouter.post("/register", upload.single("image"), registerUser);
 userRouter.post("/register", formidable(), registerUser);
 userRouter.post("/verify-email", verifyEmail);
 userRouter.post("/login", loginUser);

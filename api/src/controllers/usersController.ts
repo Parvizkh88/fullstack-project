@@ -1,3 +1,4 @@
+// import fs from "fs";
 import { Request, RequestHandler, Response } from "express";
 import jwt from "jsonwebtoken";
 
@@ -9,7 +10,7 @@ import sendEmailWithNodeMailer from "../helpers/email";
 
 const registerUser: RequestHandler = async (req: Request, res: Response) => {
   try {
-    // console.log(req.fields);
+    console.log(req.fields);
     // console.log(req.files);
     if (!req.fields) {
       res.status(400).json({ message: "Missing request fields" });
@@ -120,6 +121,11 @@ const verifyEmail = async (req: Request, res: Response) => {
         phone: phone,
         is_verified: 1,
       });
+      // create the user with image
+      // if (image) {
+      //   newUser.image.data = fs.readFileSync(image.path);
+      //   newUser.image.contentType = image.type;
+      // }
       // save the user
       const user = await newUser.save();
       if (!user) {
