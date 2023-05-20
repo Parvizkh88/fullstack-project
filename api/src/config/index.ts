@@ -13,7 +13,7 @@ const dev = {
     // sessionSecretKey: process.env.SESSION_SECRET_KEY,
   },
   db: {
-    url: process.env.MONGO_URL || "mongodb://127.0.0.1:27017/ecommerce2023",
+    url: "mongodb://127.0.0.1:27017/ecommerce2023" || process.env.MONGO_URL,
   },
 };
 

@@ -32,7 +32,7 @@ const registerUser: RequestHandler = async (req: Request, res: Response) => {
         message: "minimum length for password is 6",
       });
     }
-
+     
     const isExist = await User.findOne({ email: email });
     if (isExist) {
       return res.status(400).json({
@@ -57,7 +57,7 @@ const registerUser: RequestHandler = async (req: Request, res: Response) => {
     const token = jwt.sign(
       { name, email, phone, hashedPassword },
       dev.app.jwtSecretKey,
-      { expiresIn: "20m" }
+      { expiresIn: "2h" }
     );
 
     // prepare an email
@@ -107,12 +107,7 @@ const verifyEmail = async (req: Request, res: Response) => {
       const decoded = jwt.verify(token, dev.app.jwtSecretKey) as DecodedToken;
 
       const { name, email, hashedPassword, phone } = decoded;
-      const isExist = await User.findOne({ email: email });
-      if (isExist) {
-        return res.status(400).json({
-          message: "user with this email already exists",
-        });
-      }
+     
       // create the user without image
       const newUser = new User({
         name: name,
@@ -187,7 +182,7 @@ const loginUser = async (req: Request, res: Response) => {
     // generate JWT access token
     // we store the id in the token: {id:user._id}
     const token = jwt.sign({ id: user._id }, String(dev.app.jwtSecretKey), {
-      expiresIn: "10m",
+      expiresIn: "5d",
     });
     // console.log(token);
 

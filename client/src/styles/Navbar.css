@@ -1,0 +1,34 @@
+.navbar {
+  display: flex;
+  padding: 15px;
+  background-color: #14274e; /* Change this to your preferred color */
+  color: #f1f6f9; /* Change this to your preferred color */
+}
+
+.navbar__logo {
+  font-size: 2em;
+  font-weight: bold;
+}
+
+.navbar__logo a {
+  color: #f1f6f9; /* Change this to your preferred color */
+  text-decoration: none;
+}
+
+.navbar__links {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin-left: auto; /* Add this */
+}
+
+.navbar__links a {
+  color: #f1f6f9; /* Change this to your preferred color */
+  text-decoration: none;
+  font-size: 1.2em;
+  transition: color 0.2s ease;
+}
+
+.navbar__links a:hover {
+  color: #394867; /* Change this to your preferred color */
+}

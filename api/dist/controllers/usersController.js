@@ -57,7 +57,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         }
         const hashedPassword = yield (0, bcryptPassword_1.securePassword)(password);
         // store the data
-        const token = jsonwebtoken_1.default.sign({ name, email, phone, hashedPassword }, config_1.default.app.jwtSecretKey, { expiresIn: "20m" });
+        const token = jsonwebtoken_1.default.sign({ name, email, phone, hashedPassword }, config_1.default.app.jwtSecretKey, { expiresIn: "2h" });
         // prepare an email
         const emailData = {
             email,
@@ -105,12 +105,6 @@ const verifyEmail = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
         try {
             const decoded = jsonwebtoken_1.default.verify(token, config_1.default.app.jwtSecretKey);
             const { name, email, hashedPassword, phone } = decoded;
-            const isExist = yield userModel_1.default.findOne({ email: email });
-            if (isExist) {
-                return res.status(400).json({
-                    message: "user with this email already exists",
-                });
-            }
             // create the user without image
             const newUser = new userModel_1.default({
                 name: name,
@@ -187,7 +181,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // generate JWT access token
         // we store the id in the token: {id:user._id}
         const token = jsonwebtoken_1.default.sign({ id: user._id }, String(config_1.default.app.jwtSecretKey), {
-            expiresIn: "10m",
+            expiresIn: "5d",
         });
         // console.log(token);
         // reset the cookie if there is a cookie with the same id

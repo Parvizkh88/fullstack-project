@@ -10,13 +10,13 @@ import adminRouter from "./routes/adminRouter";
 
 // third party packages here
 
-// import cors from 'cors'  ;
+import cors from 'cors'  ;
 
 // import {connectDB} from './config/db';
 
 const app: Application = express();
 
-// app.use(cors());
+app.use(cors());
 app.use(morgan("dev"));
 app.use(cookieParser());
 app.use(bodyParser.json());
