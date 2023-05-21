@@ -22,11 +22,11 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     try {
         console.log(req.fields);
         // console.log(req.files);
-        if (!req.fields) {
+        if (!req.body) {
             res.status(400).json({ message: "Missing request fields" });
             return;
         }
-        const { name, email, password, phone } = req.fields;
+        const { name, email, password, phone } = req.body;
         // Check that required properties exist
         if (!name || !email || !password || !phone) {
             res

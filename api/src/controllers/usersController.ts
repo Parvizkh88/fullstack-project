@@ -12,12 +12,12 @@ const registerUser: RequestHandler = async (req: Request, res: Response) => {
   try {
     console.log(req.fields);
     // console.log(req.files);
-    if (!req.fields) {
+    if (!req.body) {
       res.status(400).json({ message: "Missing request fields" });
       return;
     }
 
-    const { name, email, password, phone } = req.fields;
+    const { name, email, password, phone } = req.body;
 
     // Check that required properties exist
     if (!name || !email || !password || !phone) {
@@ -32,7 +32,7 @@ const registerUser: RequestHandler = async (req: Request, res: Response) => {
         message: "minimum length for password is 6",
       });
     }
-     
+
     const isExist = await User.findOne({ email: email });
     if (isExist) {
       return res.status(400).json({
@@ -107,7 +107,7 @@ const verifyEmail = async (req: Request, res: Response) => {
       const decoded = jwt.verify(token, dev.app.jwtSecretKey) as DecodedToken;
 
       const { name, email, hashedPassword, phone } = decoded;
-     
+
       // create the user without image
       const newUser = new User({
         name: name,

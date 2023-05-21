@@ -1,110 +1,157 @@
 import React, { useState } from "react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 // import { useDispatch } from "react-redux";
 import { addUser } from "../redux/userSlice";
 import "tailwindcss/tailwind.css";
 import { registerService } from "services/userService";
 import { Navigate, useNavigate } from "react-router";
+import { FormState, User } from "@types";
 
 const RegistrationForm: React.FC = () => {
-  const navigate = useNavigate()
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState("");
-  const [result, setResult] = useState("");
+  const [errors, setErrors] = useState<Array<String>>([]);
+  // const [errors, setErrors] = useState([]);
+  const navigate = useNavigate();
+  const [userInfo, setUserInfo] = useState<FormState>({
+    name: "",
+    email: "",
+    password: "",
+    phone: "",
+    image: null,
+  });
 
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserInfo({ ...userInfo, [event.target.name]: event.target.value });
+  };
 
-  const handleSubmit =async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserInfo({
+      ...userInfo,
+      image: event.target.files?.[0] || null,
+    });
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const message = await registerService({ name, email, password, phone });
-    setResult( message);
-    console.log(message);
-    
-    if(message=="success"){
-      console.log("sfsdfsfdsf");
-      
-      navigate("/confirmEmail");
+    const formData = new FormData();
+    const { name, email, password, phone, image } = userInfo;
+    formData.append("name", name);
+    formData.append("email", email);
+    formData.append("password", password);
+    formData.append("phone", phone);
+    if (image) {
+      formData.append("image", image);
     }
-    setName("");
-    setEmail("");
-    setPassword("");
-    setPhone("");
+    try {
+      await registerService(formData);
+      navigate("/confirmEmail");
+    } catch (error: any) {
+      // setErrors([...errors, error.message]);
+       toast.error(error.message);
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="mb-4">{result} </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 font-bold mb-2" htmlFor="name">
-          Name
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="name"
-          type="name"
-          placeholder="Name"
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          required
-        />
-      </div>
+    <div>
+      <ToastContainer />
+      <form onSubmit={handleSubmit}>
+        <ul>
+          {errors.map((err, index) => (
+            <li key={index} className="text-red-800">
+              {err}
+            </li>
+          ))}
+        </ul>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="name">
+            Name
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="image"
+            type="file"
+            name="image"
+            placeholder="Imeage"
+            onChange={handleFileChange}
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="name">
+            Name
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="name"
+            name="name"
+            type="name"
+            placeholder="Name"
+            value={userInfo.name}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
 
-      <div className="mb-4">
-        <label className="block text-gray-700 font-bold mb-2" htmlFor="email">
-          Email
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="email"
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          required
-        />
-      </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="email">
+            Email
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email"
+            value={userInfo.email}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
 
-      <div className="mb-6">
-        <label
-          className="block text-gray-700 font-bold mb-2"
-          htmlFor="password"
-        >
-          Password
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="password"
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(event) => setPassword(event.target.value)}
-          required
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-gray-700 font-bold mb-2" htmlFor="phone">
-          Phone
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          id="phone"
-          type="phone"
-          placeholder="phone"
-          value={phone}
-          onChange={(event) => setPhone(event.target.value)}
-          required
-        />
-      </div>
+        <div className="mb-6">
+          <label
+            className="block text-gray-700 font-bold mb-2"
+            htmlFor="password"
+          >
+            Password
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Password"
+            value={userInfo.password}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label className="block text-gray-700 font-bold mb-2" htmlFor="phone">
+            Phone
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            id="phone"
+            type="text"
+            name="phone"
+            placeholder="phone"
+            value={userInfo.phone}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
 
-      <div className="flex items-center justify-between">
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="submit"
-        >
-          Register
-        </button>
-      </div>
-    </form>
+        <div className="flex items-center justify-between">
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Register
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

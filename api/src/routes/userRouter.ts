@@ -1,5 +1,3 @@
-import formidable from "express-formidable";
-import session from "express-session";
 import { Router } from "express";
 
 import {
@@ -13,7 +11,8 @@ import {
 } from "../controllers/usersController";
 import dev from "../config";
 import { isLoggedIn, isLoggedOut } from "../middlewares/auth";
-// import upload from "../middlewares/fileUpload";
+import { upload } from "../middlewares/fileUpload";
+
 const userRouter = Router();
 
 // userRouter.use(
@@ -27,7 +26,7 @@ const userRouter = Router();
 // );
 // I would like to use multer instead of formidable to upload images:
 // userRouter.post("/register", upload.single("image"), registerUser);
-userRouter.post("/register", formidable(), registerUser);
+userRouter.post("/register", upload.single("image"), registerUser);
 userRouter.post("/verify-email", verifyEmail);
 userRouter.post("/login", loginUser);
 userRouter.get("/logout", logoutUser);

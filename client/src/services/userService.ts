@@ -1,39 +1,34 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios'
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
 
-import { responseLogin, responseRegister, User } from '@types';
+import { FormState, responseLogin, responseRegister, User } from "@types";
 
 const baseURL = "http://localhost:8080/api/";
 
+const registerService = async (userInfo: FormData) => {
+  //http:localhost:8080/api/users/register
+  
 
-const registerService = async (userInfo:User) => {
-//http:localhost:8080/api/users/register
- let response = await axios.post(baseURL + "users/register", userInfo);
-   console.log(response);
-   
-    // if(response.status!=200){
-    //     return  await response.data.message;
-    // }
 
-    return "success";
-  };
+   try {
+     let response = await axios.post(`${baseURL}users/register`, userInfo);
+     return response.data;
+   } catch (error: any) {
+     throw new Error(error.response.data.message);
+   }
+  
 
+ 
+};
 
 // search to direct to detail page ---------------------------
-const loginService =
+const loginService = createAsyncThunk(
+  "users/login",
+  async (loginObj: object) => {
+    let response = await axios.post(baseURL + "users/login", loginObj);
+    let data: responseLogin = await response.data;
+    return data;
+  }
+);
 
-     createAsyncThunk(
-       "users/login",
-       async (loginObj:object) => {
-         let response = await axios.post(baseURL + "users/login", loginObj);
-         let data: responseLogin = await response.data;
-         return data;
-       }
-     );
-
-
-
-export {
-    registerService,
-    loginService
-}
+export { registerService, loginService };
