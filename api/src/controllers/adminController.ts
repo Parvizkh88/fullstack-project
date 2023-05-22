@@ -111,6 +111,9 @@ const logoutAdmin = async (req: Request, res: Response) => {
     }
   }
 };
+
+
+
 const getAllUsers = async (req: Request, res: Response) => {
   try {
     const users = await User.find({ is_admin: 0 });

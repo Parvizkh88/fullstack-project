@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+
 import "tailwindcss/tailwind.css";
 import { loginService } from "services/userService";
-import { AppDispatch } from "redux/store";
+
 import { useAppDispatch, useAppSelector } from "redux/hooks";
 import { useNavigate } from "react-router";
 import { toast, ToastContainer } from "react-toastify";
@@ -19,11 +19,15 @@ const LoginForm: React.FC = () => {
     event.preventDefault();
 
     try {
-     const user= await loginService({email, password});
-       dispatch(loginUser(user));
-      navigate("/");
+      const user = await loginService({ email, password });
+      dispatch(loginUser(user));
+      toast("login");
+      if (user.role == 1) {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
     } catch (error: any) {
-
       toast.error(error.message);
     }
 

@@ -1,31 +1,3 @@
-// import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-// interface User {
-//   email: string;
-//   password: string;
-// }
-
-// interface UserState {
-//   users: User[];
-// }
-
-// const initialState: UserState = {
-//   users: [],
-// };
-
-// export const userSlice = createSlice({
-//   name: "user",
-//   initialState,
-//   reducers: {
-//     addUser: (state, action: PayloadAction<User>) => {
-//       state.users.push(action.payload);
-//     },
-//   },
-// });
-
-// export const { addUser } = userSlice.actions;
-
-// export default userSlice.reducer;
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User } from "@types";
 
@@ -60,7 +32,7 @@ export const userSlice = createSlice({
   },
 });
 
-export const { addUser, loginUser } = userSlice.actions;
+export const { addUser, loginUser, logoutUser } = userSlice.actions;
 
 export default userSlice.reducer;
 

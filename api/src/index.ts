@@ -2,6 +2,7 @@ import express, { Application, NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
+import csurf from "csurf";
 
 import dev from "./config";
 import connectDatabase from "./config/db";
@@ -10,15 +11,24 @@ import adminRouter from "./routes/adminRouter";
 
 // third party packages here
 
-import cors from 'cors'  ;
+import cors from "cors";
 
 // import {connectDB} from './config/db';
 
 const app: Application = express();
 
-app.use(cors());
+const CLIENT_ORIGIN = "http://localhost:3000";
+
+app.use(
+  cors({
+    origin: CLIENT_ORIGIN,
+    // credentials: true,
+  })
+);
+
 app.use(morgan("dev"));
 app.use(cookieParser());
+// app.use(csurf({ cookie: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use("/api/users", userRouter);

@@ -29,7 +29,7 @@ const userRouter = Router();
 userRouter.post("/register", upload.single("image"), registerUser);
 userRouter.post("/verify-email", verifyEmail);
 userRouter.post("/login", loginUser);
-userRouter.get("/logout", logoutUser);
+userRouter.post("/logout", logoutUser);
 userRouter.get("/", isLoggedIn, userProfile);
 userRouter.post("/forget-password", forgetPassword);
 userRouter.post("/reset-password", resetPassword);

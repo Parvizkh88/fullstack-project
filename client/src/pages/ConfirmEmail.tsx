@@ -1,9 +1,7 @@
 import React from 'react'
 
-const ConfirmEmail = () => {
-  return (
-    <div>ConfirmEmail</div>
-  )
-}
+const ConfirmEmail: React.FC = () => {
+  return <div>ConfirmEmail</div>;
+};
 
 export default ConfirmEmail

@@ -192,7 +192,7 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // name of the cookie: String(user._id)
         // token is the thing you want to store in the cookie:token
         // path name I want to use when I am creating the cookie
-        res.cookie(String(user._id), token, {
+        res.cookie("token", token, {
             path: "/",
             expires: new Date(Date.now() + 1000 * 9 * 60),
             httpOnly: true,
@@ -201,11 +201,13 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
         // -----------------------------------------
         res.status(200).json({
+            // token:token,
             user: {
                 name: user.name,
                 email: user.email,
                 phone: user.phone,
                 image: user.image,
+                role: user.is_admin,
             },
             message: "login successful",
         });
@@ -226,18 +228,8 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.loginUser = loginUser;
 const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { email } = req.body;
-        const user = yield userModel_1.default.findOne({ email: email });
-        if (!user) {
-            return res.status(400).json({
-                message: "user with this email does not exist.",
-            });
-        }
-        req.cookies[`${user._id}`] = "";
-        res.status(200).json({
-            ok: true,
-            message: "logout successful ",
-        });
+        res.clearCookie("token");
+        res.send({ message: "Logged out" });
     }
     catch (error) {
         if (error instanceof Error) {

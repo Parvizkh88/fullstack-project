@@ -19,7 +19,7 @@ const userRouter = (0, express_1.Router)();
 userRouter.post("/register", fileUpload_1.upload.single("image"), usersController_1.registerUser);
 userRouter.post("/verify-email", usersController_1.verifyEmail);
 userRouter.post("/login", usersController_1.loginUser);
-userRouter.get("/logout", usersController_1.logoutUser);
+userRouter.post("/logout", usersController_1.logoutUser);
 userRouter.get("/", auth_1.isLoggedIn, usersController_1.userProfile);
 userRouter.post("/forget-password", usersController_1.forgetPassword);
 userRouter.post("/reset-password", usersController_1.resetPassword);

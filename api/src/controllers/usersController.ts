@@ -181,9 +181,13 @@ const loginUser = async (req: Request, res: Response) => {
     // token base authentication
     // generate JWT access token
     // we store the id in the token: {id:user._id}
-    const token = jwt.sign({ id: user._id }, String(dev.app.jwtSecretKey), {
-      expiresIn: "5d",
-    });
+    const token = jwt.sign(
+      { id: user._id },
+      String(dev.app.jwtSecretKey),
+      {
+        expiresIn: "5d",
+      }
+    );
     // console.log(token);
 
     // reset the cookie if there is a cookie with the same id
@@ -195,7 +199,7 @@ const loginUser = async (req: Request, res: Response) => {
     // name of the cookie: String(user._id)
     // token is the thing you want to store in the cookie:token
     // path name I want to use when I am creating the cookie
-    res.cookie(String(user._id), token, {
+    res.cookie("token", token, {
       path: "/",
       expires: new Date(Date.now() + 1000 * 9 * 60),
       httpOnly: true, // send the jwt token inside http only cookie
@@ -204,11 +208,13 @@ const loginUser = async (req: Request, res: Response) => {
     });
     // -----------------------------------------
     res.status(200).json({
+      // token:token,
       user: {
         name: user.name,
         email: user.email,
         phone: user.phone,
         image: user.image,
+        role: user.is_admin,
       },
       message: "login successful",
     });
@@ -226,18 +232,9 @@ const loginUser = async (req: Request, res: Response) => {
 };
 const logoutUser = async (req: Request, res: Response) => {
   try {
-     const { email } = req.body;
-    const user = await User.findOne({ email: email });
-    if (!user) {
-      return res.status(400).json({
-        message: "user with this email does not exist.",
-      });
-    }
-    req.cookies[`${user._id}`] = "";
-    res.status(200).json({
-      ok: true,
-      message: "logout successful ",
-    });
+     res.clearCookie("token");
+     res.send({ message: "Logged out" });
+
   } catch (error: unknown) {
     if (error instanceof Error) {
       res.status(500).json({
