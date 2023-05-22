@@ -27,8 +27,8 @@
 
 // export default userSlice.reducer;
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User} from "@types";
-import { loginService } from "services/userService";
+import { User } from "@types";
+
 
 interface UserState {
   users: User[];
@@ -37,7 +37,7 @@ interface UserState {
 
 const initialState: UserState = {
   users: [],
-  isLoggedIn: false,
+  isLoggedIn: localStorage.getItem("user") ? true : false,
 };
 
 export const userSlice = createSlice({
@@ -47,32 +47,36 @@ export const userSlice = createSlice({
     addUser: (state, action: PayloadAction<User>) => {
       state.users.push(action.payload);
     },
-    checkUser: (
-      state,
-      action: PayloadAction<{ email: string; password: string }>
-    ) => {
-      const { email, password } = action.payload;
-      const user = state.users.find(
-        (user) => user.email === email && user.password === password
-      );
-      state.isLoggedIn = !!user;
+    loginUser: (state, action: PayloadAction<User>) => {
+      state.isLoggedIn = true;
+      const userInfo = action.payload;
+      localStorage.setItem("user", JSON.stringify(userInfo));
+      state.users.push(userInfo);
+    },
+    logoutUser: (state) => {
+      state.isLoggedIn = false;
+      localStorage.removeItem("user");
     },
   },
-
-  extraReducers: (builder) => {
-    builder.addCase(loginService.fulfilled, (state, action) => {
-     
-    });
-    builder.addCase(loginService.rejected, (state, action) => {
-      // Handle the rejected case
-    });
-    builder.addCase(loginService.pending, (state, action) => {
-      // Handle the pending case
-    });
-  },
-
 });
 
-export const { addUser, checkUser } = userSlice.actions;
+export const { addUser, loginUser } = userSlice.actions;
 
 export default userSlice.reducer;
+
+
+ // extraReducers: (builder) => {
+  //   builder.addCase(loginService.fulfilled, (state, action) => {
+  //     // Update the state with the user data
+  //     state.isLoggedIn = true;
+  //     const userInfo = action.payload;
+  //     localStorage.setItem("user", JSON.stringify(userInfo));
+  //     state.users.push(userInfo);
+  //   });
+  //   builder.addCase(loginService.rejected, (state, action) => {
+  //     // Handle the rejected case
+  //   });
+  //   builder.addCase(loginService.pending, (state, action) => {
+  //     // Handle the pending case
+  //   });
+  // },

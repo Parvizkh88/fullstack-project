@@ -64,7 +64,7 @@ const registerUser = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             subject: "Account Activation Email",
             html: `
             <h2>Hello ${name}! </h2>
-            <p>Please click here to <a href="${config_1.default.app.clientUrl}/api/users/activate?token=${token}" target="_blank">activate your account</a> </p>
+            <p>Please click here to <a href="${config_1.default.app.clientUrl}/activate?token=${token}" target="_blank">activate your account</a> </p>
             `,
         };
         (0, email_1.default)(emailData);
@@ -226,6 +226,14 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.loginUser = loginUser;
 const logoutUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const { email } = req.body;
+        const user = yield userModel_1.default.findOne({ email: email });
+        if (!user) {
+            return res.status(400).json({
+                message: "user with this email does not exist.",
+            });
+        }
+        req.cookies[`${user._id}`] = "";
         res.status(200).json({
             ok: true,
             message: "logout successful ",

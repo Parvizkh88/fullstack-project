@@ -66,7 +66,7 @@ const registerUser: RequestHandler = async (req: Request, res: Response) => {
       subject: "Account Activation Email",
       html: `
             <h2>Hello ${name}! </h2>
-            <p>Please click here to <a href="${dev.app.clientUrl}/api/users/activate?token=${token}" target="_blank">activate your account</a> </p>
+            <p>Please click here to <a href="${dev.app.clientUrl}/activate?token=${token}" target="_blank">activate your account</a> </p>
             `,
     };
     sendEmailWithNodeMailer(emailData);
@@ -226,6 +226,14 @@ const loginUser = async (req: Request, res: Response) => {
 };
 const logoutUser = async (req: Request, res: Response) => {
   try {
+     const { email } = req.body;
+    const user = await User.findOne({ email: email });
+    if (!user) {
+      return res.status(400).json({
+        message: "user with this email does not exist.",
+      });
+    }
+    req.cookies[`${user._id}`] = "";
     res.status(200).json({
       ok: true,
       message: "logout successful ",
