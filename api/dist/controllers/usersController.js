@@ -180,10 +180,10 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // token base authentication
         // generate JWT access token
         // we store the id in the token: {id:user._id}
-        const token = jsonwebtoken_1.default.sign({ id: user._id }, String(config_1.default.app.jwtSecretKey), {
+        const token = jsonwebtoken_1.default.sign({ id: user._id, role: user.is_admin }, String(config_1.default.app.jwtSecretKey), {
             expiresIn: "5d",
         });
-        // console.log(token);
+        console.log(token);
         // reset the cookie if there is a cookie with the same id
         if (req.cookies[`${user._id}`]) {
             req.cookies[`${user._id}`] = "";

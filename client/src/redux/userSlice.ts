@@ -5,11 +5,22 @@ import { User } from "@types";
 interface UserState {
   users: User[];
   isLoggedIn: boolean;
+  isAdmin: boolean;
 }
+const checkRole = (): boolean => {
+  if (localStorage.getItem("user")) {
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (user.role === 1) {
+      return true;
+    }
+  }
+  return false;
+};
 
 const initialState: UserState = {
   users: [],
   isLoggedIn: localStorage.getItem("user") ? true : false,
+  isAdmin: checkRole(),
 };
 
 export const userSlice = createSlice({
@@ -27,6 +38,7 @@ export const userSlice = createSlice({
     },
     logoutUser: (state) => {
       state.isLoggedIn = false;
+      state.isAdmin = false;
       localStorage.removeItem("user");
     },
   },

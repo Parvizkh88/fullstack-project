@@ -22,6 +22,7 @@ const LoginForm: React.FC = () => {
       const user = await loginService({ email, password });
       dispatch(loginUser(user));
       toast("login");
+      
       if (user.role == 1) {
         navigate("/dashboard");
       } else {

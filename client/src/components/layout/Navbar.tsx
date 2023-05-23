@@ -8,7 +8,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { useNavigate } from "react-router";
 
 const Navbar: React.FC = () => {
-  const { isLoggedIn } = useAppSelector((state) => state.user);
+  const { isLoggedIn, isAdmin } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const logoutHandler = async () => {
@@ -35,7 +35,12 @@ const Navbar: React.FC = () => {
           {isLoggedIn ? (
             <>
               <span></span>
-              <Link to="/profile">Profile</Link>
+              {isAdmin ? (
+                <Link to="/dashboard">Dashboard</Link>
+              ) : (
+                <Link to="/profile">Profile</Link>
+              )}
+
               <button onClick={logoutHandler}>Logout</button>
             </>
           ) : (

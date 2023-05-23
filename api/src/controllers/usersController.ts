@@ -182,13 +182,13 @@ const loginUser = async (req: Request, res: Response) => {
     // generate JWT access token
     // we store the id in the token: {id:user._id}
     const token = jwt.sign(
-      { id: user._id },
+      { id: user._id, role:user.is_admin },
       String(dev.app.jwtSecretKey),
       {
         expiresIn: "5d",
       }
     );
-    // console.log(token);
+    console.log(token);
 
     // reset the cookie if there is a cookie with the same id
     if (req.cookies[`${user._id}`]) {

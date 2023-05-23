@@ -12,6 +12,7 @@ import adminRouter from "./routes/adminRouter";
 // third party packages here
 
 import cors from "cors";
+import productRouter from "./routes/productRouter";
 
 // import {connectDB} from './config/db';
 
@@ -22,17 +23,29 @@ const CLIENT_ORIGIN = "http://localhost:3000";
 app.use(
   cors({
     origin: CLIENT_ORIGIN,
-    // credentials: true,
+    credentials: true,
   })
 );
+
 
 app.use(morgan("dev"));
 app.use(cookieParser());
 // app.use(csurf({ cookie: true }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+ res.header("Access-Control-Allow-Credentials", "true");
+ res.header("Access-Control-Allow-Origin", CLIENT_ORIGIN);
+ res.header(
+   "Access-Control-Allow-Headers",
+   "Origin, X-Requested-With, Content-Type, Accept, Cookie"
+ );
+ next();
+});
 app.use("/api/users", userRouter);
 app.use("/api/admin", adminRouter);
+app.use("/api/admin/products", productRouter);
 
 const PORT = dev.app.serverPort;
 

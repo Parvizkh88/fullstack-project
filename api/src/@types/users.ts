@@ -16,6 +16,7 @@ export type DecodedToken = {
   hashedPassword: string;
   is_admin: number;
   is_verified: number;
+  role: number;
   createdAt: Date;
   isBanned: number;
   // image?: string;

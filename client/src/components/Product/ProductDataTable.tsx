@@ -1,27 +1,43 @@
 import { Product } from "@types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProductRow from "./ProductRow";
 import "./DataTable.css"
+import { getProducts } from "services/productService";
 
 
 const ProductDataTable: React.FC = () => {
-  const [products, setProducts] = useState<Product[]>([
-    {
-      id: 1,
-      name: "Mobile",
-      price: 100,
-    },
-    {
-      id: 2,
-      name: "Laptop",
-      price: 500,
-    },
-    {
-      id: 3,
-      name: "Headphones",
-      price: 50,
-    },
-  ]);
+  // const [products, setProducts] = useState<Product[]>([]);
+   const [products, setProducts] = useState<Product[]>([
+     {
+       id: 1,
+       name: "Mobile",
+       price: 100,
+     },
+     {
+       id: 2,
+       name: "Laptop",
+       price: 500,
+     },
+     {
+       id: 3,
+       name: "Headphones",
+       price: 50,
+     },
+   ]);
+  useEffect( () => {
+    // const fetchData = async () => {
+    //   try {
+    //     const result = await getProducts();
+    //     setProducts(result);
+    //   } catch (error) {
+    //     // Handle the error
+    //     console.error(error);
+    //   }
+    // };
+
+    // fetchData();
+  },)
+  
 
   const handleDelete = (id: number) => {
     setProducts((prevProducts) =>
